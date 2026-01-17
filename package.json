@@ -1,7 +1,7 @@
 {
-  "name": "hyperliquid-trade-ledger",
+  "name": "hyperliqid-trade-data-api",
   "version": "1.0.0",
-  "description": "Hyperliquid Trade Ledger API with optional Builder-only mode",
+  "description": "Hyperliqid Trade Data API with optional Builder-only mode",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -16,10 +16,10 @@
     "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [
-    "hyperliquid",
+    "hyperliqid",
     "trading",
     "api",
-    "ledger"
+    "data"
   ],
   "author": "",
   "license": "MIT",

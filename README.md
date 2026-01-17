@@ -1,6 +1,6 @@
-# Hyperliquid Trade Ledger API
+# Hyperliqid Trade Data API
 
-A production-ready, dockerized API service for Hyperliquid trade analytics with builder-only mode support for trading competitions and Insilico analysis.
+A production-ready, dockerized API service for Hyperliqid trade analytics with builder-only mode support for trading competitions and data analysis.
 
 ## Quick Start
 
