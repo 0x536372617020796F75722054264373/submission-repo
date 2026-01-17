@@ -1,0 +1,92 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Fill {
+  id         Int      @id @default(autoincrement())
+  timeMs     BigInt   @map("time_ms")
+  user       String   @map("user_address") @db.VarChar(42)
+  coin       String   @db.VarChar(20)
+  side       String   @db.VarChar(4) // "B" for buy, "A" for ask/sell
+  px         Decimal  @db.Decimal(20, 8)
+  sz         Decimal  @db.Decimal(20, 8)
+  fee        Decimal  @db.Decimal(20, 8)
+  closedPnl  Decimal? @map("closed_pnl") @db.Decimal(20, 8)
+  builderFee Decimal? @map("builder_fee") @db.Decimal(20, 8)
+  tid        String?  @unique @db.VarChar(100)
+
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([user, coin, timeMs], map: "fills_user_coin_time_ms_idx")
+  @@index([user, timeMs], map: "fills_user_time_ms_idx")
+  @@index([coin, timeMs])
+  @@map("fills")
+}
+
+model Position {
+  id            Int      @id @default(autoincrement())
+  timeMs        BigInt   @map("time_ms")
+  user          String   @map("user_address") @db.VarChar(42)
+  coin          String   @db.VarChar(20)
+  netSize       Decimal  @map("net_size") @db.Decimal(20, 8) // positive = long, negative = short, 0 = no position
+  avgEntryPx    Decimal  @map("avg_entry_px") @db.Decimal(20, 8)
+  unrealizedPnl Decimal? @map("unrealized_pnl") @db.Decimal(20, 8)
+  liquidationPx Decimal? @map("liquidation_px") @db.Decimal(20, 8)
+  marginUsed    Decimal? @map("margin_used") @db.Decimal(20, 8)
+
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([user, coin, timeMs])
+  @@index([user, coin, timeMs])
+  @@map("positions")
+}
+
+model PositionLifecycle {
+  id                  Int      @id @default(autoincrement())
+  user                String   @map("user_address") @db.VarChar(42)
+  coin                String   @db.VarChar(20)
+  startMs             BigInt   @map("start_ms")
+  endMs               BigInt?  @map("end_ms") // null if still open
+  hasBuilderFills     Boolean  @default(false) @map("has_builder_fills")
+  hasNonBuilderFills  Boolean  @default(false) @map("has_non_builder_fills")
+
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@index([user, coin, startMs, endMs])
+  @@index([user, coin, startMs])
+  @@map("position_lifecycles")
+}
+
+model EquitySnapshot {
+  id           Int      @id @default(autoincrement())
+  user         String   @map("user_address") @db.VarChar(42)
+  timeMs       BigInt   @map("time_ms")
+  accountValue Decimal  @map("account_value") @db.Decimal(20, 8)
+
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([user, timeMs])
+  @@index([user, timeMs])
+  @@map("equity_snapshots")
+}
+
+model Deposit {
+  id        Int      @id @default(autoincrement())
+  user      String   @map("user_address") @db.VarChar(42)
+  timeMs    BigInt   @map("time_ms")
+  amount    Decimal  @db.Decimal(20, 8)
+  txHash    String?  @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([user, timeMs])
+  @@index([user, timeMs])
+  @@map("deposits")
+}

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hyperliquid-ledger-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hyperliquid_ledger
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hyperliquid-ledger-api
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/hyperliquid_ledger?schema=public
+      PORT: 3000
+      NODE_ENV: production
+      HL_API_URL: https://api.hyperliquid.xyz
+      HL_WS_URL: wss://api.hyperliquid.xyz/ws
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
