@@ -20,9 +20,17 @@ This will fetch all available fills from Hyperliquid and store them in the datab
 
 ### Step 2: Query Trade History
 
+**View specific number of trades:**
 ```bash
-curl "http://localhost:3000/v1/trades?user=0x0e09b56ef137f417e424f1265425e93bfff77e17"
+# Get last 5 trades
+curl "http://localhost:3000/v1/trades?user=0x0e09b56ef137f417e424f1265425e93bfff77e17" | jq 
+'.[0:5]'
+
+# Pretty print all trades
+curl "http://localhost:3000/v1/trades?user=0x0e09b56ef137f417e424f1265425e93bfff77e17" | jq '.'
 ```
+
+
 
 Returns all trades for this wallet with details on price, size, fees, and builder attribution.
 
