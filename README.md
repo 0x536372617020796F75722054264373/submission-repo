@@ -4,6 +4,62 @@ A production-ready, dockerized API service for Hyperliqid trade analytics with b
 
 ## Quick Start
 
+## Usage Example: Analyzing a Wallet Address
+
+### Step 1: Ingest Data for a Wallet
+
+First, load the trading data for the wallet you want to analyze:
+
+```bash
+curl -X POST http://localhost:3000/ingest \
+  -H "Content-Type: application/json" \
+  -d '{"user": "0x0e09b56ef137f417e424f1265425e93bfff77e17"}'
+```
+
+This will fetch all available fills from Hyperliquid and store them in the database. Wait a few seconds for ingestion to complete.
+
+### Step 2: Query Trade History
+
+```bash
+curl "http://localhost:3000/v1/trades?user=0x0e09b56ef137f417e424f1265425e93bfff77e17"
+```
+
+Returns all trades for this wallet with details on price, size, fees, and builder attribution.
+
+### Step 3: Check PnL Performance
+
+```bash
+curl "http://localhost:3000/v1/pnl?user=0x0e09b56ef137f417e424f1265425e93bfff77e17"
+```
+
+Returns realized PnL, fees paid, trade count, and return percentage.
+
+### Step 4: View Position History
+
+```bash
+curl "http://localhost:3000/v1/positions/history?user=0x0e09b56ef137f417e424f1265425e93bfff77e17&coin=BTC"
+```
+
+Shows how the BTC position evolved over time with entry prices and liquidation levels.
+
+### Step 5: Check for Builder Activity
+
+```bash
+curl "http://localhost:3000/v1/pnl?user=0x0e09b56ef137f417e424f1265425e93bfff77e17&builderOnly=true"
+```
+
+Filters to only builder-attributed trades and shows if the wallet has mixed bot/manual activity (tainted flag).
+
+### Complete Analysis via Web UI
+
+Alternatively, open `http://localhost:3000` in your browser:
+1. Enter the wallet address or click a test wallet button
+2. Click any of the analysis buttons (Get Trades, Get PnL, etc.)
+3. View formatted results with statistics
+
+---
+
+
 ### One-Command Deployment
 
 ```bash
